@@ -173,6 +173,10 @@ public class Datahike {
         return (APersistentMap)pullFn.invoke(db, Clojure.read(selector), eid);
     }
 
+    public static APersistentMap pullRef(Object db, String selector, String ref) {
+        return (APersistentMap)pullFn.invoke(db, Clojure.read(selector), Clojure.read(ref));
+    }
+
     /**
      * Same as pull but takes multiple entities as input.
      *
@@ -183,6 +187,9 @@ public class Datahike {
      */
     public static List pullMany(Object db, String selector, Iterable eids) {
         return (List)pullManyFn.invoke(db, Clojure.read(selector), eids);
+    }
+    public static List pullManyRef(Object db, String selector, String refs) {
+        return (List)pullManyFn.invoke(db, Clojure.read(selector), Clojure.read(refs));
     }
 
     /**
@@ -293,6 +300,9 @@ public class Datahike {
      */
     public static IEntity entity(Object db, long eid) {
         return (IEntity)entityFn.invoke(db, eid);
+    }
+    public static IEntity entityRef(Object db, String ref) {
+        return (IEntity)entityFn.invoke(db, Clojure.read(ref));
     }
 
     /**

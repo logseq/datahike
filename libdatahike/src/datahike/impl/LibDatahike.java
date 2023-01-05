@@ -186,6 +186,25 @@ public final class LibDatahike {
         }
     }
 
+    @CEntryPoint(name = "pull_ref")
+    public static void pull_ref (@CEntryPoint.IsolateThreadContext long isolateId,
+                             @CConst CCharPointer input_format,
+                             @CConst CCharPointer raw_input,
+                             @CConst CCharPointer selector_edn,
+                             @CConst CCharPointer ref_edn,
+                             @CConst CCharPointer output_format,
+                             @CConst OutputReader output_reader) {
+        try {
+            Object db = loadInput(input_format, raw_input);
+            String selector = CTypeConversion.toJavaString(selector_edn);
+            String ref = CTypeConversion.toJavaString(ref_edn);
+            output_reader.call(toOutput(output_format, Datahike.pullRef(db, selector, ref)));
+        } catch (Exception e) {
+            output_reader.call(toException(e));
+        }
+    }
+
+
     @CEntryPoint(name = "pull_many")
     public static void pull_many (@CEntryPoint.IsolateThreadContext long isolateId,
                                   @CConst CCharPointer input_format,
@@ -204,6 +223,24 @@ public final class LibDatahike {
         }
     }
 
+    @CEntryPoint(name = "pull_many_ref")
+    public static void pull_many_ref (@CEntryPoint.IsolateThreadContext long isolateId,
+                                  @CConst CCharPointer input_format,
+                                  @CConst CCharPointer raw_input,
+                                  @CConst CCharPointer selector_edn,
+                                  @CConst CCharPointer refs_edn,
+                                  @CConst CCharPointer output_format,
+                                  @CConst OutputReader output_reader) {
+        try {
+            Object db = loadInput(input_format, raw_input);
+            String selector = CTypeConversion.toJavaString(selector_edn);
+            String refs = CTypeConversion.toJavaString(refs_edn);
+            output_reader.call(toOutput(output_format, Datahike.pullManyRef(db, selector, refs)));
+        } catch (Exception e) {
+            output_reader.call(toException(e));
+        }
+    }
+
     @CEntryPoint(name = "entity")
     public static void entity (@CEntryPoint.IsolateThreadContext long isolateId,
                                @CConst CCharPointer input_format,
@@ -214,6 +251,22 @@ public final class LibDatahike {
         try {
             Object db = loadInput(input_format, raw_input);
             output_reader.call(toOutput(output_format, libdatahike.intoMap(Datahike.entity(db, eid))));
+        } catch (Exception e) {
+            output_reader.call(toException(e));
+        }
+    }
+
+    @CEntryPoint(name = "entity_ref")
+    public static void entity_ref (@CEntryPoint.IsolateThreadContext long isolateId,
+                               @CConst CCharPointer input_format,
+                               @CConst CCharPointer raw_input,
+                               @CConst CCharPointer ref_edn,
+                               @CConst CCharPointer output_format,
+                               @CConst OutputReader output_reader) {
+        try {
+            Object db = loadInput(input_format, raw_input);
+            String ref = CTypeConversion.toJavaString(ref_edn);
+            output_reader.call(toOutput(output_format, libdatahike.intoMap(Datahike.entityRef(db, ref))));
         } catch (Exception e) {
             output_reader.call(toException(e));
         }
