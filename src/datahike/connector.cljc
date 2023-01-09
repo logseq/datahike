@@ -146,7 +146,10 @@
         _ (log/debug "Transacting" (count (:tx-data arg)) " objects with arguments: " (dissoc arg :tx-data))
         _ (log/trace "Transaction data" (:tx-data arg))]
     (try
-      (deref (transact! connection arg))
+      (let [result (deref (transact! connection arg))]
+        (merge result
+               {:db-after-max-tx (:max-tx (:db-after result))
+                :db-before-max-tx (:max-tx (:db-before result))}))
       (catch Exception e
         (log/errorf "Error during transaction %s" (.getMessage e))
         (throw (.getCause e))))))

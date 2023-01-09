@@ -17,6 +17,7 @@ import clojure.lang.Keyword;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Base64;
@@ -163,7 +164,18 @@ public final class LibDatahike {
         try {
             Object conn = Datahike.connect(readConfig(db_config));
             Iterable txData = (Iterable)loadInput(tx_format, tx_data);
-            output_reader.call(toOutput(output_format, Datahike.transact(conn, txData).get(Util.kwd(":tx-meta"))));
+            Map result = Datahike.transact(conn, txData);
+            APersistentMap m = Util.map(
+                Util.kwd(":tx-data"),
+                result.get(Util.kwd(":tx-data")),
+                Util.kwd(":tx-meta"),
+                result.get(Util.kwd(":tx-meta")),
+                Util.kwd(":db-after-max-tx"),
+                result.get(Util.kwd(":db-after-max-tx")),
+                Util.kwd(":db-before-max-tx"),
+                result.get(Util.kwd(":db-before-max-tx"))
+                );
+            output_reader.call(toOutput(output_format, m));
         } catch (Exception e) {
             output_reader.call(toException(e));
         }
